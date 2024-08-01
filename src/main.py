@@ -1,11 +1,32 @@
-from ocr import read_image, preprocess_image, extract_text
+import cv2
+
+from image_processing import binarize_image, rotate_image  # deskew_image
+from ocr import detect_rotation, extract_text
+
 
 def main():
-    image_path = 'path_to_your_image.jpg'  # Change this to your image path
-    image = read_image(image_path)
-    processed_image = preprocess_image(image)
-    text = extract_text(processed_image)
+    # TODO: from argument
+    image_path = "../images/sample_.png"
+    image = cv2.imread(image_path)
+
+    # Step 1: Binarize the image
+    binary_image = binarize_image(image)
+
+    # Step 2: Detect the rotation angle
+    rotation_angle = detect_rotation(image_path)
+    print(f"Detected rotation angle: {rotation_angle}")
+
+    # Step 3: Rotate the image to correct orientation
+    rotated_image = rotate_image(binary_image, -rotation_angle)
+
+    # Step 4: Deskew the image
+    # FIXME: Invalid number of channels in input image
+    # deskewed_image = deskew_image(rotated_image)
+
+    # Step 5: Extract text using Tesseract
+    text = extract_text(rotated_image)
     print(text)
+
 
 if __name__ == "__main__":
     main()

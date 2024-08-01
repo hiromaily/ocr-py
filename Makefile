@@ -20,8 +20,9 @@ create-project:
 
 .PHONY: install-dependencies
 install-dependencies:
-	poetry add opencv-python
-	poetry add pytesseract
+	poetry add opencv-python pytesseract
+	poetry add -D flake8 black isort mypy pytest
+	poetry add --group dev Flake8-pyproject
 
 #------------------------------------------------------------------------------
 # Install after clone project
@@ -31,10 +32,18 @@ set-env:
 	poetry env use 3.12.4
 	poetry install
 
+#------------------------------------------------------------------------------
+# dev
+#------------------------------------------------------------------------------
+.PHONY: lint
+lint:
+	@#import文を自動整理す
+	poetry run isort src
+	@#PEP8に準拠したフォーマット
+	poetry run black src
+	@#文法チェック
+	poetry run flake8 src
 
-#------------------------------------------------------------------------------
-# run
-#------------------------------------------------------------------------------
 .PHONY: run
 run:
-	poetry run python ./src/main.py
+	poetry run python main.py
