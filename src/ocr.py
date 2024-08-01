@@ -8,4 +8,4 @@ def detect_rotation(image_path):
 
 
 def extract_text(image):
-    return pytesseract.image_to_string(image)
+    return pytesseract.image_to_string(image, config="--oem 1 -l jpn")

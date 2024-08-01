@@ -10,12 +10,33 @@ def binarize_image(image):
     return binary_image
 
 
+# # Bug version
+# def rotate_image(image, angle):
+#     (h, w) = image.shape[:2]
+#     center = (w // 2, h // 2)
+#     M = cv2.getRotationMatrix2D(center, angle, 1.0)
+#     rotated = cv2.warpAffine(
+#         image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE
+#     )
+#     return rotated
 def rotate_image(image, angle):
     (h, w) = image.shape[:2]
-    center = (w // 2, h // 2)
-    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    # Compute the new bounding dimensions of the image
+    new_w = int(h * abs(np.sin(np.radians(angle))) + w * abs(np.cos(np.radians(angle))))
+    new_h = int(h * abs(np.cos(np.radians(angle))) + w * abs(np.sin(np.radians(angle))))
+    # Compute the center of the new image
+    # center = (new_w // 2, new_h // 2)
+
+    # Get the rotation matrix for rotating and scaling the image
+    M = cv2.getRotationMatrix2D((w // 2, h // 2), angle, 1.0)
+
+    # Adjust the rotation matrix to account for the translation
+    M[0, 2] += (new_w - w) / 2
+    M[1, 2] += (new_h - h) / 2
+
+    # Perform the rotation
     rotated = cv2.warpAffine(
-        image, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE
+        image, M, (new_w, new_h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE
     )
     return rotated
 
