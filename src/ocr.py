@@ -1,7 +1,7 @@
 import pytesseract
 
 
-def detect_rotation(image_path):
+def detect_ocr_rotation(image_path):
     """
     This can detect rotation of 90 degrees, 180 degrees, and 270 degrees,
     but an error occurs when tilting at 30 degrees.

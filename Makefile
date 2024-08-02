@@ -47,3 +47,19 @@ lint:
 .PHONY: run
 run:
 	poetry run python src/main.py ./images/sample.png
+
+# For test
+.PHONY: run-all-images
+run-all-images:
+	poetry run python src/main.py ./images/sample.png
+	poetry run python src/main.py ./images/sample2.png
+	poetry run python src/main.py ./images/sample3.png
+	poetry run python src/main.py ./images/sample_90.png
+	poetry run python src/main.py ./images/sample_180.png
+	poetry run python src/main.py ./images/sample_270.png
+	poetry run python src/main.py ./images/sample_80.png
+	poetry run python src/main.py ./images/sample_150.png
+
+
+
+

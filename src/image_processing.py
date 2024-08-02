@@ -113,6 +113,26 @@ def warpAffine_rotaion(src, angle, scale):
     return cv2.warpAffine(src, M, (new_width, new_height))
 
 
+def remove_background(image):
+
+    # Convert the image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Apply a binary threshold to the image
+    _, binary = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY_INV)
+
+    # Find contours in the binary image
+    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Create a mask from the contours
+    mask = np.zeros_like(image)
+    cv2.drawContours(mask, contours, -1, (255, 255, 255), thickness=cv2.FILLED)
+
+    # Bitwise-and mask and original image
+    return cv2.bitwise_and(image, mask)
+
+
+# FIXME: It doesn't work yet
 def deskew_image(image):
     # Convert to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)

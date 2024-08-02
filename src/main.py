@@ -2,13 +2,11 @@ import argparse
 import os
 
 import cv2
+from pytesseract import TesseractError
 
-from image_processing import (
-    detect_skew,  # binarize_image, deskew_image
-    rotate_image,
-    warpAffine_rotaion,
-)
-from ocr import detect_rotation, extract_text
+from extractor import JapaneseTextExtractor
+from image_processing import detect_skew, rotate_image, warpAffine_rotaion
+from ocr import detect_ocr_rotation, extract_text
 
 
 def save_image(image, directory, filename):
@@ -23,6 +21,16 @@ def save_image(image, directory, filename):
     cv2.imwrite(file_path, image)
 
 
+def get_rotate_image(image):
+    rotation_angle = detect_ocr_rotation(image)
+    print(f"Detected rotation angle: {rotation_angle}")
+    if rotation_angle != 0:
+        rotated_image = rotate_image(image, rotation_angle)
+        save_image(rotated_image, "output", "rotated_image2.png")
+        return rotated_image
+    return image
+
+
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser(description="pytesseract tool")
@@ -34,38 +42,48 @@ def main():
     # Read image
     image = cv2.imread(image_path)
 
-    # Image processing
-    # - Step 1: Binarize the image
+    # Binarize the image
     # FIXME: after executing, pytesseract can't detect text
     # binary_image = binarize_image(image)
     # save_image(binary_image, 'output', 'binary_image.png')
 
-    # - Step 2: Deskew the image
+    # Deskew the image
     # FIXME: Invalid number of channels in input image
     # deskewed_image = deskew_image(image)
     # save_image(deskewed_image, "output", "deskewed_image.png")
 
-    # - Step 3: Detect the rotation angle
+    # Detect the rotation angle
     rotation_angle = detect_skew(image)
     print(f"Detected rotation angle: {rotation_angle}")
 
-    # - Step 4: Rotate the image to correct orientation
+    # Rotate the image to correct orientation
     if rotation_angle != 0.0:
         rotated_image = warpAffine_rotaion(image, rotation_angle, 1.0)
         save_image(rotated_image, "output", "rotated_image.png")
     else:
         rotated_image = image
 
-    # it may be upside down OCR wise
-    rotation_angle = detect_rotation(rotated_image)
-    print(f"Detected rotation angle: {rotation_angle}")
-    if rotation_angle != 0:
-        rotated_image = rotate_image(image, rotation_angle)
-        save_image(rotated_image, "output", "rotated_image2.png")
+    # Image may be upside down OCR wise
+    # may occur error when background has noise
+    try:
+        rotated_image = get_rotate_image(rotated_image)
+    except TesseractError as e:
+        print(f"Failed to call detect_ocr_rotation: {e}")
+        # sys.exit(f"Failed to call detect_ocr_rotation: {e}")
+        # WIP: remove background
+        # no_bg_image = remove_background(rotated_image)
+        # save_image(no_bg_image, "output", "no_bg_image.png")
 
     # Extract text using Tesseract
     text = extract_text(rotated_image)
     print(f"Extracted text: \n{text}")
+
+    # Extract specific items from text
+    extractor = JapaneseTextExtractor(text)
+    print(f"Name: {extractor.name()}")
+    print(f"Expiration Date: {extractor.expiration_date()}")
+    print(f"Sign: {extractor.sign()}")
+    print(f"Number: {extractor.number()}")
 
 
 if __name__ == "__main__":
