@@ -46,4 +46,4 @@ lint:
 
 .PHONY: run
 run:
-	poetry run python src/main.py ./images/sample3_.png
+	poetry run python src/main.py ./images/sample.png
