@@ -84,6 +84,12 @@ def main():
     print(f"Expiration Date: {extractor.expiration_date()}")
     print(f"Sign: {extractor.sign()}")
     print(f"Number: {extractor.number()}")
+    print(f"Birth Day: {extractor.birth_day()}")
+    print(f"Sex: {extractor.sex()}")
+    print(f"Qualified Day: {extractor.qualified_day()}")
+    print(f"Issued Day: {extractor.issued_day()}")
+    print(f"Address: {extractor.address()}")
+    print(f"Insurer Number: {extractor.insurer_number()}")
 
 
 if __name__ == "__main__":

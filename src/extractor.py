@@ -11,6 +11,14 @@ class JapaneseTextExtractor:
             return match.group(1).strip()
         return None
 
+    def search_two_words(self, pattern):
+        match = re.search(pattern, self.text)
+        if match:
+            address_part1 = match.group(1).strip()
+            address_part2 = match.group(2).strip()
+            return address_part1 + address_part2
+        return None
+
     def name(self):
         pattern = r"氏名\s+(.+?)\s+(?!\S)"
         return self.search(pattern)
@@ -25,4 +33,28 @@ class JapaneseTextExtractor:
 
     def number(self):
         pattern = r"番号\s+(\d+)"
+        return self.search(pattern)
+
+    def birth_day(self):
+        pattern = r"生年月日\s+(.+?)\s+[^\s]"
+        return self.search(pattern)
+
+    def sex(self):
+        pattern = r"性別\s+([男女])\s+"
+        return self.search(pattern)
+
+    def qualified_day(self):
+        pattern = r"資格取得年月日\s+(.+?)\s+[^\s]"
+        return self.search(pattern)
+
+    def issued_day(self):
+        pattern = r"交付年月日\s*[。]?\s*(令和\d+年\d+月\d+日)"
+        return self.search(pattern)
+
+    def address(self):
+        pattern = r"住所\s+(.+?)\s*\n\s*(.+)"
+        return self.search_two_words(pattern)
+
+    def insurer_number(self):
+        pattern = r"保険者番号\s+(\d+)"
         return self.search(pattern)
