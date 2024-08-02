@@ -31,6 +31,20 @@ def get_rotate_image(image):
     return image
 
 
+def display(extractor):
+    # Extract specific items from text
+    print(f"Name: {extractor.name()}")
+    print(f"Expiration Date: {extractor.expiration_date()}")
+    print(f"Sign: {extractor.sign()}")
+    print(f"Number: {extractor.number()}")
+    print(f"Birth Day: {extractor.birth_day()}")
+    print(f"Sex: {extractor.sex()}")
+    print(f"Qualified Day: {extractor.qualified_day()}")
+    print(f"Issued Day: {extractor.issued_day()}")
+    print(f"Address: {extractor.address()}")
+    print(f"Insurer Number: {extractor.insurer_number()}")
+
+
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser(description="pytesseract tool")
@@ -78,18 +92,19 @@ def main():
     text = extract_text(rotated_image)
     print(f"Extracted text: \n{text}")
 
-    # Extract specific items from text
+    # TODO: if there are no extracted items, try to ratate 180 degree then try to extract
+    # Reverse image if key items are None
     extractor = JapaneseTextExtractor(text)
-    print(f"Name: {extractor.name()}")
-    print(f"Expiration Date: {extractor.expiration_date()}")
-    print(f"Sign: {extractor.sign()}")
-    print(f"Number: {extractor.number()}")
-    print(f"Birth Day: {extractor.birth_day()}")
-    print(f"Sex: {extractor.sex()}")
-    print(f"Qualified Day: {extractor.qualified_day()}")
-    print(f"Issued Day: {extractor.issued_day()}")
-    print(f"Address: {extractor.address()}")
-    print(f"Insurer Number: {extractor.insurer_number()}")
+    if extractor.expiration_date() is None:
+        # reverse 180 degree
+        rotated_image = warpAffine_rotaion(rotated_image, 180, 1.0)
+        save_image(rotated_image, "output", "rotated_image3.png")
+        text = extract_text(rotated_image)
+        print(f"Extracted text: \n{text}")
+        extractor = JapaneseTextExtractor(text)
+
+    # print all
+    display(extractor)
 
 
 if __name__ == "__main__":

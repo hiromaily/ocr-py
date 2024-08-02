@@ -1,5 +1,7 @@
 import re
 
+# implement extract and validate
+
 
 class JapaneseTextExtractor:
     def __init__(self, text):
@@ -21,7 +23,11 @@ class JapaneseTextExtractor:
 
     def name(self):
         pattern = r"氏名\s+(.+?)\s+(?!\S)"
-        return self.search(pattern)
+        result = self.search(pattern)
+        if result is None:
+            pattern = r"氏名\s+(.+)"
+            return self.search(pattern)
+        return result
 
     def expiration_date(self):
         pattern = r"有効期限\s+([^\s]+)"
@@ -29,7 +35,11 @@ class JapaneseTextExtractor:
 
     def sign(self):
         pattern = r"記号\s+([^\s]+)\s+番号"
-        return self.search(pattern)
+        result = self.search(pattern)
+        if result is None:
+            pattern = r"記号\s+(\d+一\d+)"
+            return self.search(pattern)
+        return result
 
     def number(self):
         pattern = r"番号\s+(\d+)"

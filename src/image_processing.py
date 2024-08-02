@@ -74,9 +74,7 @@ def rotate_image(image, angle):
         return cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
     elif angle == 180:
         print(f"rotate_image: {angle}:cv2.ROTATE_180")
-        # FIXME: somehow, result is wrong by cv2.ROTATE_180
-        # return cv2.rotate(image, cv2.ROTATE_180)
-        return cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        return cv2.rotate(image, cv2.ROTATE_180)
     elif angle == 270:
         print(f"rotate_image: {angle}:cv2.ROTATE_90_CLOCKWISE")
         return cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
